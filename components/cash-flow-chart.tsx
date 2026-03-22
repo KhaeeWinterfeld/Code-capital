@@ -71,16 +71,20 @@ export function CashFlowChart() {
   }, [filteredTransactions, revenueCategoryIds, expenseCategoryIds])
 
   return (
-    <div className="bg-card rounded-xl border border-primary p-5 h-full flex flex-col shadow-[0_0_16px_#5864FF]">
+    <div
+      className="bg-card rounded-xl border border-primary p-5 flex flex-col shadow-[0_0_16px_#5864FF] min-h-[346px] max-h-[346px] overflow-hidden"
+      style={{ height: 346, maxHeight: 346 }}
+      suppressHydrationWarning
+    >
       <h2 className="text-sm font-semibold text-foreground mb-4 shrink-0">Fluxo de Caixa</h2>
       {data.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
           Nenhum dado disponível
         </div>
       ) : (
-        <div className="flex-1 min-h-0">
+        <div className="h-full" suppressHydrationWarning>
           <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} barCategoryGap="30%" barGap={4}>
+          <BarChart data={data} barCategoryGap="30%" barGap={4} margin={{ top: 8, right: 16, left: 16, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-sidebar-border)" vertical={false} />
             <XAxis
               dataKey="month"

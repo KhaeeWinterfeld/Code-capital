@@ -89,7 +89,7 @@ export function DistributionCharts() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Expense Distribution */}
-      <div className="bg-card rounded-lg border border-primary p-4 shadow-[0_0_16px_#5864FF]">
+      <div className="bg-card rounded-lg border border-primary p-4 shadow-[0_0_16px_#5864FF] h-[220px]" suppressHydrationWarning>
         <h3 className="text-xs font-semibold text-foreground mb-1 tracking-wide">Distribuição de Despesas</h3>
         <p className="text-xs text-muted-foreground mb-2">
           Total: {formatCurrency(totalExpenses)}
@@ -100,8 +100,8 @@ export function DistributionCharts() {
             <p className="text-xs text-muted-foreground">Sem dados</p>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 xl:w-72 xl:h-72 min-w-0">
+          <div className="flex items-center gap-3 h-[150px]" suppressHydrationWarning>
+            <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 xl:w-48 xl:h-48 min-w-0" suppressHydrationWarning>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -138,7 +138,7 @@ export function DistributionCharts() {
       </div>
 
       {/* Revenue Distribution */}
-      <div className="bg-card rounded-lg border border-primary p-4 shadow-[0_0_16px_#5864FF]">
+      <div className="bg-card rounded-lg border border-primary p-4 shadow-[0_0_16px_#5864FF] h-[220px]" suppressHydrationWarning>
         <h3 className="text-xs font-semibold text-foreground mb-1 tracking-wide">Distribuição de Receitas</h3>
         <p className="text-xs text-muted-foreground mb-2">
           Total: {formatCurrency(totalRevenue)}
@@ -149,8 +149,8 @@ export function DistributionCharts() {
             <p className="text-xs text-muted-foreground">Sem dados</p>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 xl:w-72 xl:h-72 min-w-0">
+          <div className="flex items-center gap-3 h-[150px]" suppressHydrationWarning>
+            <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 xl:w-48 xl:h-48 min-w-0" suppressHydrationWarning>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { getToken } from "@/lib/auth"
 import { FinanceProvider } from "@/lib/finance-context"
 import { Navbar } from "@/components/navbar"
 import { SummaryCards } from "@/components/summary-cards"
@@ -13,8 +15,14 @@ import { AddTransactionModal, AddTransactionFAB } from "@/components/add-transac
 type Page = "dashboard" | "transactions"
 
 function AppContent() {
+  const router = useRouter()
   const [page, setPage] = useState<Page>("dashboard")
   const [modalOpen, setModalOpen] = useState(false)
+
+  useEffect(() => {
+    const t = getToken()
+    if (!t) router.replace("/login")
+  }, [router])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

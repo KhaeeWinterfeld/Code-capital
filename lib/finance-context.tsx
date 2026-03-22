@@ -26,46 +26,7 @@ export interface Transaction {
 }
 
 // Business-focused default categories
-const DEFAULT_EXPENSE_CATEGORIES: CategoryDefinition[] = [
-  { id: "operational", name: "Custos Operacionais", type: "expense", budget: 3000, icon: "building", color: "blue" },
-  { id: "suppliers", name: "Fornecedores", type: "expense", budget: 5000, icon: "truck", color: "orange" },
-  { id: "marketing", name: "Marketing", type: "expense", budget: 2000, icon: "megaphone", color: "pink" },
-  { id: "taxes", name: "Impostos", type: "expense", budget: 4000, icon: "receipt", color: "yellow" },
-  { id: "payroll", name: "Folha de Pagamento", type: "expense", budget: 8000, icon: "users", color: "purple" },
-  { id: "tools", name: "Ferramentas e Software", type: "expense", budget: 1000, icon: "wrench", color: "cyan" },
-  { id: "misc-expense", name: "Outros Gastos", type: "expense", icon: "more", color: "slate" },
-]
-
-const DEFAULT_REVENUE_CATEGORIES: CategoryDefinition[] = [
-  { id: "product-sales", name: "Venda de Produtos", type: "revenue", icon: "package", color: "green" },
-  { id: "services", name: "Serviços", type: "revenue", icon: "briefcase", color: "emerald" },
-  { id: "consulting", name: "Consultoria", type: "revenue", icon: "lightbulb", color: "teal" },
-  { id: "other-revenue", name: "Outras Receitas", type: "revenue", icon: "coins", color: "lime" },
-]
-
-const INITIAL_TRANSACTIONS: Transaction[] = [
-  // Revenue (PJ)
-  { id: "1", categoryId: "product-sales", amount: 12500, date: "2026-03-01", type: "PJ", description: "Lote de produtos - Cliente ABC" },
-  { id: "2", categoryId: "services", amount: 4800, date: "2026-03-03", type: "PJ", description: "Manutenção mensal - Empresa XYZ" },
-  { id: "3", categoryId: "consulting", amount: 3200, date: "2026-03-05", type: "PJ", description: "Consultoria estratégica" },
-  { id: "4", categoryId: "product-sales", amount: 8200, date: "2026-03-10", type: "PJ", description: "Venda direta loja" },
-  { id: "5", categoryId: "services", amount: 2500, date: "2026-03-15", type: "PJ", description: "Serviço de instalação" },
-  { id: "6", categoryId: "other-revenue", amount: 750, date: "2026-03-18", type: "PF", description: "Reembolso de despesas" },
-  // Expenses (PJ)
-  { id: "7", categoryId: "suppliers", amount: 4200, date: "2026-03-02", type: "PJ", description: "Matéria-prima mensal" },
-  { id: "8", categoryId: "payroll", amount: 6500, date: "2026-03-05", type: "PJ", description: "Salários equipe" },
-  { id: "9", categoryId: "operational", amount: 1800, date: "2026-03-04", type: "PJ", description: "Aluguel escritório" },
-  { id: "10", categoryId: "marketing", amount: 1500, date: "2026-03-06", type: "PJ", description: "Campanha Google Ads" },
-  { id: "11", categoryId: "taxes", amount: 2800, date: "2026-03-08", type: "PJ", description: "DAS Simples Nacional" },
-  { id: "12", categoryId: "tools", amount: 450, date: "2026-03-09", type: "PJ", description: "Assinatura SaaS" },
-  { id: "13", categoryId: "suppliers", amount: 890, date: "2026-03-12", type: "PJ", description: "Embalagens" },
-  { id: "14", categoryId: "operational", amount: 320, date: "2026-03-14", type: "PJ", description: "Energia elétrica" },
-  { id: "15", categoryId: "marketing", amount: 680, date: "2026-03-16", type: "PJ", description: "Material promocional" },
-  // Expenses (PF)
-  { id: "16", categoryId: "misc-expense", amount: 180, date: "2026-03-11", type: "PF", description: "Correios" },
-  { id: "17", categoryId: "operational", amount: 95, date: "2026-03-13", type: "PF", description: "Gasolina" },
-  { id: "18", categoryId: "tools", amount: 120, date: "2026-03-17", type: "PF", description: "Domínio e hospedagem" },
-]
+// No defaults: cada usuário começa zerado e carrega do backend
 
 interface FinanceContextValue {
   transactions: Transaction[]
@@ -89,11 +50,8 @@ interface FinanceContextValue {
 const FinanceContext = createContext<FinanceContextValue | null>(null)
 
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
-  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS)
-  const [categories, setCategories] = useState<CategoryDefinition[]>([
-    ...DEFAULT_EXPENSE_CATEGORIES,
-    ...DEFAULT_REVENUE_CATEGORIES,
-  ])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [categories, setCategories] = useState<CategoryDefinition[]>([])
   const [servicesByCategory, setServicesByCategory] = useState<Record<string, BackendService[]>>({})
   const [filter, setFilter] = useState<FilterType>("all")
 
@@ -186,6 +144,36 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       setServicesByCategory(servicesMap)
       setCategories(mappedCats)
       setTransactions(mappedTxs)
+
+      if (cats.length === 0 && svcs.length === 0 && txs.length === 0) {
+        const seedExpense = [
+          { name: "Custos Operacionais", type: "expense" as const },
+          { name: "Fornecedores", type: "expense" as const },
+          { name: "Marketing", type: "expense" as const },
+          { name: "Impostos", type: "expense" as const },
+          { name: "Ferramentas e Software", type: "expense" as const },
+          { name: "Outros Gastos", type: "expense" as const },
+        ]
+        const seedRevenue = [
+          { name: "Venda de Produtos", type: "revenue" as const },
+          { name: "Serviços", type: "revenue" as const },
+          { name: "Consultoria", type: "revenue" as const },
+          { name: "Outras Receitas", type: "revenue" as const },
+        ]
+        const createdCats: CategoryDefinition[] = []
+        for (const item of [...seedExpense, ...seedRevenue]) {
+          try {
+            const created = await api.createCategory(item.name)
+            createdCats.push({ id: created.id, name: created.name, type: item.type })
+            try {
+              const svc = await api.createService("Geral", created.id)
+              servicesMap[created.id] = [svc]
+            } catch {}
+          } catch {}
+        }
+        setServicesByCategory({ ...servicesMap })
+        setCategories(createdCats)
+      }
     } catch (_) {
     }
   }, [])
